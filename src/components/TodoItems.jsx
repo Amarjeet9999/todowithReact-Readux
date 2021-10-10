@@ -24,6 +24,8 @@ export const Todo = () => {
     data: todos,
     isLoading,
     isError,
+    total,
+    completed,
   } = useSelector((state) => state.todos.todos);
 
   // Getting Dispatch
@@ -33,8 +35,14 @@ export const Todo = () => {
   const getTodos = async () => {
     dispatch(getTodoLoading());
     try {
-      const resp = await axios.get("http://localhost:3001/todos");
-      dispatch(getTodoSuccess(resp.data));
+      const data = await axios.get("http://localhost:3001/todos");
+      dispatch(
+        getTodoSuccess({
+          data: data.data,
+          total: data.data.length,
+          comp: data.data.filter((e) => e.status).length,
+        })
+      );
     } catch (e) {
       dispatch(getTodoError(e.message));
     }
@@ -43,10 +51,24 @@ export const Todo = () => {
     dispatch(deleteTodoLoading());
     try {
       await axios.delete(`http://localhost:3001/todos/${id}`);
-      // dispatch(getTodoSuccess());
+
       getTodos();
     } catch (e) {
       dispatch(deleteTodoError(e.message));
+    }
+  };
+
+  const handleToggle = async (id) => {
+    dispatch(updateTodoLoading());
+    const data = await axios.get(`http://localhost:3001/todos/${id}`);
+    try {
+      await axios.patch(`http://localhost:3001/todos/${id}`, {
+        status: !data.data.status,
+      });
+      // dispatch(updateTodoSuccess());
+      getTodos();
+    } catch (e) {
+      dispatch(updateTodoError(e.message));
     }
   };
 
@@ -63,6 +85,11 @@ export const Todo = () => {
         "Error Occured"
       ) : (
         <div>
+          <div>
+            <h5>Total Todo : {total}</h5>
+            <h5>Completed Todo : {todos.filter((e) => e.status).length}</h5>
+          </div>
+
           {todos.map((e) => (
             <div
               key={e.id}
@@ -77,15 +104,29 @@ export const Todo = () => {
                 marginTop: "10px",
                 cursor: "pointer",
               }}>
-              <List onClick={() => history.push(`/todo/${e.id}`)}>
+              <List
+                style={{ width: "70%" }}
+                onClick={() => history.push(`/todo/${e.id}`)}>
                 {e.title}
               </List>
 
-              <Delete
-                onClick={() => handleDelete(e.id)}
-                className='material-icons'>
-                delete
-              </Delete>
+              <div
+                style={{
+                  width: "30%",
+                  display: "flex",
+                  justifyContent: "space-around",
+                }}>
+                <Delete
+                  onClick={() => handleToggle(e.id)}
+                  className='material-icons'>
+                  {e.status ? "check_circle" : "check_circle_outline"}
+                </Delete>
+                <Delete
+                  onClick={() => handleDelete(e.id)}
+                  className='material-icons'>
+                  delete
+                </Delete>
+              </div>
             </div>
           ))}
         </div>

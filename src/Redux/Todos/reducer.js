@@ -23,6 +23,8 @@ const initState = {
   todos: {
     isLoading: false,
     isError: false,
+    total: 0,
+    completed: 0,
     data: [],
   },
 };
@@ -58,6 +60,8 @@ export const todosReducer = (state = initState, { type, payload }) => {
         todos: {
           ...state.todos,
           isLoading: false,
+          total: payload.total,
+          completed: payload.comp,
         },
       };
 
@@ -86,7 +90,8 @@ export const todosReducer = (state = initState, { type, payload }) => {
         todos: {
           ...state.todos,
           isLoading: false,
-          data: [...payload],
+          data: [...payload.data],
+          total: payload.total,
         },
       };
 

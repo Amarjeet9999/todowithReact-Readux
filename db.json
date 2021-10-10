@@ -1,19 +1,9 @@
 {
   "todos": [
     {
-      "status": false,
+      "status": true,
       "title": "learn react",
       "id": 1
-    },
-    {
-      "status": false,
-      "title": "dfvds",
-      "id": 2
-    },
-    {
-      "status": false,
-      "title": "learn vue",
-      "id": 3
     }
   ]
 }

@@ -25,9 +25,9 @@ export const subCount = (data) => {
   return { type: REDUCE_COUNTER, payload: data };
 };
 
-export const addTodo = (data) => {
-  return { type: ADD_TODO, payload: data };
-};
+// export const addTodo = (data) => {
+//   return { type: ADD_TODO, payload: data };
+// };
 
 export const addTodoLoading = () => {
   return { type: ADD_TODO_LOADING };

@@ -7,15 +7,13 @@ import axios from "axios";
 import styled from "styled-components";
 import {
   deleteTodoLoading,
-  deleteTodoSuccess,
   deleteTodoError,
   updateTodoLoading,
-  updateTodoSuccess,
   updateTodoError,
 } from "../Redux/Todos/action";
 
 export const SingleTodo = () => {
-  const [edit, setEdit] = React.useState(false);
+  const [edit, setEdit] = React.useState(true);
   const [update, setUpdate] = React.useState("");
   const [single, setSingle] = React.useState("");
   const { id } = useParams();
@@ -56,6 +54,19 @@ export const SingleTodo = () => {
     }
   };
 
+  const handleUpdateStatus = async (id) => {
+    dispatch(updateTodoLoading());
+    try {
+      await axios.patch(`http://localhost:3001/todos/${id}`, {
+        status: !single.status,
+      });
+      getTodo();
+      setEdit(true);
+    } catch (e) {
+      dispatch(updateTodoError(e.message));
+    }
+  };
+
   return (
     <>
       <h3>EDIT OR DELETE YOUR TODO</h3>
@@ -87,6 +98,9 @@ export const SingleTodo = () => {
             </List>
             <TodoData>
               <b>{single.status ? "Done" : "Not Done"}</b>
+              <button onClick={() => handleUpdateStatus(single.id)}>
+                {!single.status ? "Done" : "Not Done"}
+              </button>
               <button onClick={() => setEdit(!edit)}>Edit</button>
               <button onClick={() => handleDelete(single.id)}>Delete</button>
             </TodoData>
