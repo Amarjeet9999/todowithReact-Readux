@@ -1,21 +1,20 @@
 /** @format */
 
 import React from "react";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import {
-  getTodoLoading,
-  getTodoSuccess,
-  getTodoError,
   deleteTodoLoading,
   deleteTodoSuccess,
   deleteTodoError,
   updateTodoLoading,
   updateTodoSuccess,
   updateTodoError,
+  getTodo,
 } from "../Redux/Todos/action";
-import axios from "axios";
 import { TodoInput } from "./TodoInput";
 
 export const Todo = () => {
@@ -25,33 +24,25 @@ export const Todo = () => {
     isLoading,
     isError,
     total,
-    completed,
+    comp,
   } = useSelector((state) => state.todos.todos);
+
+  const token = useSelector((state) => state.auth.token);
+  console.log(token);
 
   // Getting Dispatch
   const dispatch = useDispatch();
 
   // Getting Data
   const getTodos = async () => {
-    dispatch(getTodoLoading());
-    try {
-      const data = await axios.get("http://localhost:3001/todos");
-      dispatch(
-        getTodoSuccess({
-          data: data.data,
-          total: data.data.length,
-          comp: data.data.filter((e) => e.status).length,
-        })
-      );
-    } catch (e) {
-      dispatch(getTodoError(e.message));
-    }
+    dispatch(getTodo());
   };
+
   const handleDelete = async (id) => {
     dispatch(deleteTodoLoading());
     try {
       await axios.delete(`http://localhost:3001/todos/${id}`);
-
+      dispatch(deleteTodoSuccess());
       getTodos();
     } catch (e) {
       dispatch(deleteTodoError(e.message));
@@ -65,7 +56,7 @@ export const Todo = () => {
       await axios.patch(`http://localhost:3001/todos/${id}`, {
         status: !data.data.status,
       });
-      // dispatch(updateTodoSuccess());
+      dispatch(updateTodoSuccess());
       getTodos();
     } catch (e) {
       dispatch(updateTodoError(e.message));
@@ -75,6 +66,10 @@ export const Todo = () => {
   React.useEffect(() => {
     getTodos();
   }, []);
+
+  if (token === "") {
+    return <Redirect to='/login' />;
+  }
 
   return (
     <>
@@ -87,10 +82,10 @@ export const Todo = () => {
         <div>
           <div>
             <h5>Total Todo : {total}</h5>
-            <h5>Completed Todo : {todos.filter((e) => e.status).length}</h5>
+            <h5>Completed Todo : {comp}</h5>
           </div>
 
-          {todos.map((e) => (
+          {todos?.map((e) => (
             <div
               key={e.id}
               style={{

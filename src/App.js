@@ -7,6 +7,7 @@ import { Counter } from "./components/Counter";
 import { Todo } from "./components/TodoItems";
 import { SingleTodo } from "./components/SingleTodo";
 import { Switch, Route } from "react-router";
+import { Login } from "./components/Login";
 
 export default function App() {
   const [state, setState] = React.useState(false);
@@ -21,6 +22,9 @@ export default function App() {
         </Route>
         <Route path='/todo/:id'>
           <SingleTodo />
+        </Route>
+        <Route path='/login'>
+          <Login />
         </Route>
         <Route>
           <h1>404 Not found</h1>

@@ -1,9 +1,8 @@
 /** @format */
-
+import axios from "axios";
 import {
   ADD_COUNTER,
   REDUCE_COUNTER,
-  ADD_TODO,
   ADD_TODO_ERROR,
   ADD_TODO_LOADING,
   ADD_TODO_SUCCESS,
@@ -78,4 +77,20 @@ export const updateTodoSuccess = (data) => {
 
 export const updateTodoError = (err) => {
   return { type: UPDATE_TODO_ERROR, payload: err };
+};
+
+export const getTodo = () => async (dispatch) => {
+  dispatch(getTodoLoading());
+  try {
+    const data = await axios.get("http://localhost:3001/todos");
+    dispatch(
+      getTodoSuccess({
+        data: data.data,
+        total: data.data.length,
+        comp: data.data.filter((e) => e.status).length,
+      })
+    );
+  } catch (e) {
+    dispatch(getTodoError(e.message));
+  }
 };

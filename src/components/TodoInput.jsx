@@ -6,6 +6,7 @@ import {
   addTodoSuccess,
   addTodoLoading,
   addTodoError,
+  add_todo,
 } from "../Redux/Todos/action";
 import axios from "axios";
 
@@ -29,7 +30,7 @@ export const TodoInput = ({ getTodos }) => {
       dispatch(addTodoError(e.message));
     }
   };
-  
+
   return (
     <>
       <h3>TODO APP</h3>
